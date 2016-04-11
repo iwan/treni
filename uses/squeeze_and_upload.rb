@@ -5,7 +5,6 @@ Aws.config.update({
   region: 'eu-west-1',
   credentials: Aws::Credentials.new(ENV['TRAIN_AWS_S3_KEY_ID'], ENV['TRAIN_AWS_S3_SECRET'])
 })
-#   credentials: Aws::Credentials.new('AKIAJ23ECFLLGXI6CGGA', 'JFd+pzW0+x7cxt0wdyybo4Csw/k5SVGL+SMDcQAO')
 
 
 
