@@ -16,9 +16,12 @@ require 'active_support/inflector'
   status_result
   status_result_parsing_error
   viaggiatreno
+  bb_time
   basic_info_list
   base_info
   fetcher
+  fetcher_v2
+  time
 ).each { |file| require File.join(File.dirname(__FILE__), 'treni', file) }
 
 

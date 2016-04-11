@@ -19,16 +19,23 @@ require 'typhoeus' # https://github.com/typhoeus/typhoeus
 
 
 class BasicInfoList
+  STEP = 10_000
+
+  # dates_dir: path della dir che contiene le cartelle con le date
+  # date_dir:  ev. nome della cartella con la data desiderata
   def initialize(dates_dir)
     @dates_dir = dates_dir
     @list_dir = File.join(dates_dir, Date.today.strftime("%Y-%m-%d"))
+    puts @list_dir
     FileUtils.mkdir_p(@list_dir) if !Dir.exist?(@list_dir)
   end
   
-  def fetch_all(max_concurrency=12)
-    (0...10).each do |k|
-      offset = k * 10_000
-      count  = 10_000
+  # arr 
+  def fetch_all(arr=[], max_concurrency=12)
+    arr = (0...10).to_a if arr.empty?
+    arr.each do |k|
+      offset = k * STEP
+      count  = STEP
       end_at = offset+count-1
 
       puts "Creating list from train numbers #{offset} to #{end_at}..."
@@ -64,11 +71,16 @@ class BasicInfoList
   end
 
 
-  def fix(merged_filename, duplicates_filename: "dupl_lines.txt", empty_arrival_time_filename: "empty_arrival_time_lines.txt")
+  def fix(merged_filename, date_dir: nil, duplicates_filename: "dupl_lines.txt", empty_arrival_time_filename: "empty_arrival_time_lines.txt")
     puts "Start fixing..."
 
     # lists_dir = Dir.glob("/Users/iwan/dev/ruby/treni/lista-thr/*").select {|f| File.directory? f}.last # selezioni cartella con data più recente
-    most_recent_dir = Dir.glob("#{@dates_dir}/*").select {|f| File.directory? f}.last # seleziona la cartella con data più recente
+    if date_dir
+      most_recent_dir = File.join(@dates_dir, date_dir)
+    else
+      most_recent_dir = Dir.glob("#{@dates_dir}/*").select {|f| File.directory? f}.last # seleziona la cartella con data più recente  
+    end
+    
 
     # ordino le liste
     FileUtils.mv File.join(most_recent_dir, merged_filename), File.join(most_recent_dir, "original_"+merged_filename) if File.exist? File.join(most_recent_dir, merged_filename)
@@ -79,7 +91,7 @@ class BasicInfoList
     dupl_lines            = []
     no_arrival_time_lines = []
 
-    lines.each do |line|
+    lines.sort.each do |line|
       line.strip!
       if line==previous_line
         dupl_lines << line

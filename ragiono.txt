@@ -1,0 +1,32 @@
+
+s = "21|EC 21|S01301|18:52|CHIASSO|19:35|MILANO CENTRALE|00:43|S01301:S01322:S01700"
+
+now = Time.now #
+bi = BaseInfo.new(bi_string: s)
+
+dep_bb = bi.dep_time
+arr = Time.new(now.year, now.month, now.day, bi.arr_time.hour, bi.arr_time.minutes)
+
+file_date = now.to_bb > dep_bb ? now.to_date : now.to_date-1
+
+if !file_path(file_date).exists? # il file non è presente
+  if now >= arr
+    # fetch
+    # ftch = ...
+    case
+    when now <= arr+3h
+      if train_arrived?
+        # salva quello che ho fetchato
+      end
+    when now > arr+3h
+      if train_arrived?
+        # salva quello che ho fetchato
+      elsif !train_departed?
+        # salva file vuoto
+      end
+    when now > arr+5h
+      # salva quello che ho fetchato (di sicuro è partito)
+    end
+  end
+
+end
