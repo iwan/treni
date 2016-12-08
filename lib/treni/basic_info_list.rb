@@ -30,6 +30,7 @@ class BasicInfoList
     FileUtils.mkdir_p(@list_dir) if !Dir.exist?(@list_dir)
   end
   
+
   # arr 
   def fetch_all(arr=[], max_concurrency=12)
     arr = (0...10).to_a if arr.empty?
@@ -41,10 +42,10 @@ class BasicInfoList
       puts "Creating list from train numbers #{offset} to #{end_at}..."
 
       filename = "#{offset}-#{end_at}_list.txt"
-      nums = (offset..end_at).to_a
+      nums = Hash[(offset..end_at).to_a.map{|e| [e, 0]}] # sarà un hash { numero_treno => nro_di_tentativi }
 
       File.open(File.join(@list_dir, filename), 'w') do |f|
-        while(nums.size>0)
+        while(nums.empty?)
           nums = fetch(nums, f, max_concurrency: max_concurrency)
         end
       end
@@ -126,14 +127,17 @@ class BasicInfoList
           uri = Viaggiatreno.train_status_uri(ti.departure_station.code, train_num)
           status_request = Typhoeus::Request.new(uri)
           status_request.on_complete do |response2|
-            r = Viaggiatreno.read_train_status(response2.body, train_num)
+            
             # puts r.basic_info
             begin
+              r = Viaggiatreno.read_train_status(response2.body, train_num, ti.departure_station.code)
               string = r.basic_info
               # puts string
               file.write(string + "\n") if string
             rescue StatusResultParsingError => e
-              failed << e.train_num
+              failed << train_num
+            rescue RuntimeError => e
+              failed << train_num
             end
           end
           hydra.queue(status_request)

@@ -22,6 +22,7 @@ require 'active_support/inflector'
   fetcher
   fetcher_v2
   time
+  essential_train_info
 ).each { |file| require File.join(File.dirname(__FILE__), 'treni', file) }
 
 

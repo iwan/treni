@@ -3,7 +3,7 @@ require 'date'
 
 Aws.config.update({
   region: 'eu-west-1',
-  credentials: Aws::Credentials.new(ENV['TRAIN_AWS_S3_KEY_ID'], ENV['TRAIN_AWS_S3_SECRET'])
+  credentials: Aws::Credentials.new(ENV.fetch'TRAIN_AWS_S3_KEY_ID', ENV.fetch'TRAIN_AWS_S3_SECRET')
 })
 
 
@@ -11,7 +11,8 @@ Aws.config.update({
 folders = true
 if folders
   yesterday = (Date.today-1).strftime("%Y-%m-%d")
-  statuses_dir = File.join(Dir.home, "dev", "ruby", "treni_misc", "statuses")
+  statuses_dir = ENV.fetch "TRAIN_STATUSES_DIR"
+
   Dir.chdir statuses_dir
   local_date_dirs = Dir.glob("*").keep_if{|f| File.directory?(f)}
   puts local_date_dirs.size

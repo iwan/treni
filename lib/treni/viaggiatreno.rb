@@ -30,9 +30,9 @@ class Viaggiatreno
       end
     end
 
-    def read_train_status(result, train_num=nil)
-      sr = StatusResult.new(result)
-      sr.train_num = train_num # train_num mi serve per tracciare la comunicazione che va male...
+    def read_train_status(result, train_num=nil, dep_station= nil)
+      sr = StatusResult.new(result, train_num, dep_station)
+      # sr.train_num = train_num # train_num mi serve per tracciare la comunicazione che va male...
       sr
       # result.select!{|ti| ti.departure_station.code==station_code} if station_code
       # result.map do |ti|
