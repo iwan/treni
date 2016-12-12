@@ -11,4 +11,9 @@ require_relative '../lib/treni'
 
 dir = ENV.fetch "TRAIN_LIST_DIR"
 
-bil = EssentialTrainInfo.new(dir)
+eti = EssentialTrainInfo.new(dir)
+# eti.fetch_all
+eti.merge_all "merged.txt"
+eti.fix "merged.txt"
+
+

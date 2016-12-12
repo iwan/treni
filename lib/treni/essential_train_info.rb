@@ -19,13 +19,14 @@ require 'typhoeus' # https://github.com/typhoeus/typhoeus
 
 class EssentialTrainInfo
   STEP = 10_000
-  MAX_ATTEMPTS = 5
+  MAX_ATTEMPTS = 4
 
   # dates_dir: path della dir che contiene le cartelle con le date
   # date_dir:  ev. nome della cartella con la data desiderata
   def initialize(dates_dir)
     @dates_dir = dates_dir
     @list_dir = File.join(dates_dir, Date.today.strftime("%Y-%m-%d"))
+    Dir.mkdir(@list_dir) if !Dir.exists?(@list_dir)
   end
 
   
@@ -43,10 +44,12 @@ class EssentialTrainInfo
 
       filename = "#{offset}-#{end_at}_list.txt"
       nums = Hash[(offset..end_at).to_a.map{|e| [e, 0]}] # sarà un hash { numero_treno => nro_di_tentativi }
-
+      round = 0
       File.open(File.join(@list_dir, filename), 'w') do |f|
-        while(nums.empty?)
+        while(!nums.empty?)
+          puts "Round #{round+1}/#{MAX_ATTEMPTS}, with #{nums.size} elements"
           nums = fetch(nums, f, max_concurrency: max_concurrency)
+          round += 1
         end
       end
     end
@@ -119,10 +122,11 @@ class EssentialTrainInfo
   def fetch(train_nums, file, max_concurrency: 12)
     # train_nums is an array with train numbers. Something like [1,2,3,4,5]
     puts "Retrieving #{train_nums.size} train statuses..."
-    failed = []
+    new_train_nums = {}
     hydra = Typhoeus::Hydra.new(max_concurrency: max_concurrency) 
     puts " ... preparing requests..."
-    requests = train_nums.map { |train_num|
+    
+    requests = train_nums.map { |train_num, count|
       # puts train_num if train_num%10==0
       train_search_request = Typhoeus::Request.new(Viaggiatreno.train_search_uri(train_num))
       train_search_request.on_complete do |response|
@@ -137,10 +141,14 @@ class EssentialTrainInfo
               string = r.basic_info
               # puts string
               file.write(string + "\n") if string
+              # count = -1 # successfull
+
             rescue StatusResultParsingError => e
-              failed << train_num
+              count+=1
+              new_train_nums[train_num] = count if count < MAX_ATTEMPTS
             rescue RuntimeError => e
-              failed << train_num
+              count+=1
+              new_train_nums[train_num] = count if count < MAX_ATTEMPTS
             end
           end
           hydra.queue(status_request)
@@ -150,7 +158,7 @@ class EssentialTrainInfo
     }
     puts " ... running requests..."
     hydra.run
-    failed
+    new_train_nums
   end
 
   def ensure_today_dir_exists
