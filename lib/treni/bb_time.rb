@@ -5,12 +5,13 @@ class BBTime < String
 
   # hour_string: "14:56"
   def initialize(time)
+    time = "" if time.nil?
     if time.is_a? String
       time = amend(time)
     elsif time.is_a? Time
       time = time.strftime("%H:%M")
     else
-      raise "Time is not a valid type (it must be a String or a Time object)"
+      raise "Time is not a valid type (it must be a String or a Time object). I found '#{time}' of class #{time.class}"
     end
     super(time)
   end

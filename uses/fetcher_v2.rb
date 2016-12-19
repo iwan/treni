@@ -1,6 +1,6 @@
 require_relative '../lib/treni'
 
-lists_dir = Env.fetch "TRAIN_LIST_DIR"
+lists_dir = ENV.fetch "TRAIN_LIST_DIR"
 lists_dir = Dir.glob(File.join(lists_dir, "*")).select {|f| File.directory? f}.sort.last # selezioni cartella con data più recente
 list_path = File.join(lists_dir, "merged.txt")
 
