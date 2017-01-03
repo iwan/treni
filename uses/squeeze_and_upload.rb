@@ -3,7 +3,7 @@ require 'date'
 
 Aws.config.update({
   region: 'eu-west-1',
-  credentials: Aws::Credentials.new(ENV.fetch'TRAIN_AWS_S3_KEY_ID', ENV.fetch'TRAIN_AWS_S3_SECRET')
+  credentials: Aws::Credentials.new(ENV.fetch 'TRAIN_AWS_S3_KEY_ID', ENV.fetch 'TRAIN_AWS_S3_SECRET')
 })
 
 
