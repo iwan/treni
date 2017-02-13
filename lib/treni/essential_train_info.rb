@@ -58,7 +58,8 @@ class EssentialTrainInfo
 
 
   def merge_all(merged_filename)
-    most_recent_dir = Dir.glob("#{@dates_dir}/*").select{|f| File.directory? f}.last # seleziona la cartella con data più recente
+    most_recent_dir = Dir.glob("#{@dates_dir}/*").select{|f| File.directory? f}.sort.last # seleziona la cartella con data più recente
+    puts "Most recent date: #{most_recent_dir}"
     # ordino le liste
     lists = Dir.glob("#{most_recent_dir}/*_list.txt").sort{|x,y| x.split("_").first.split("-").first.to_i <=> y.split("_").first.split("-").first.to_i} # pippone per ordinare...
     puts "Start merging #{lists.size} files..."

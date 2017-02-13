@@ -12,7 +12,7 @@ require_relative '../lib/treni'
 dir = ENV.fetch "TRAIN_LIST_DIR"
 
 eti = EssentialTrainInfo.new(dir)
-# eti.fetch_all
+eti.fetch_all # quando esegue questa poi non esegue le successive
 eti.merge_all "merged.txt"
 eti.fix "merged.txt"
 
