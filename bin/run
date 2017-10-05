@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+# se la cartella con liste non è presente o è vuota, recupera liste
+
+# poi esegui uses/fetcher_v2.rb
