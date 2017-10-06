@@ -1,2 +1,2 @@
 #! /bin/sh
-ruby /usr/src/app/uses/squeeze_and_upload.rb
+ruby /usr/src/app/uses/fetcher_v3.rb
