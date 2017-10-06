@@ -6,8 +6,8 @@ RUN gem update bundler
 RUN gem install whenever
 
 RUN mkdir /usr/src/app
-RUN mkdir /usr/src/data/lists
-RUN mkdir /usr/src/data/statuses
+RUN mkdir -p /usr/src/data/lists
+RUN mkdir -p /usr/src/data/statuses
 
 WORKDIR /usr/src/app
 COPY . /usr/src/app
